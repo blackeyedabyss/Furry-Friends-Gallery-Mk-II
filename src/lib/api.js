@@ -5,19 +5,43 @@ const API_KEY = process.env.REACT_APP_DOG_API_KEY;
 
 const callAPI = async (url, params = null) => {
     const requestConfig = {
-        baseURL: API_URL,
-        headers: {
-          'x-api-key': API_KEY
-        },
-        url
-      };
+      baseURL: API_URL,
+      headers: {
+        'x-api-key': API_KEY
+      },
+      url
+    };
+  
+    if (params) {
+      requestConfig.params = params;
+    }
+    try {
+      return await axios(requestConfig);
+    } catch (err) {
+      console.log('axios encountered an error', err);
+    }
+  };
+
+  export const fetchBreeds = async (page, count = 10) => {
+    const breeds = await callAPI('breeds', {
+        limit: count,
+        page,
+      });
     
-      if (params) {
-        requestConfig.params = params;
+      return {
+        breeds: breeds.data,
+        totalBreeds: breeds.headers['pagination-count'],
+      };
+  };
+  export const fetchPictures = async (breed = '', count = 20) => {
+    if (!breed) {
+        return [];
       }
-      try {
-        return await axios(requestConfig);
-      } catch (err) {
-        console.log('axios encountered an error', err);
-      }
-};
+    
+      const pictures = await callAPI('images/search', {
+        breed_id: breed,
+        limit: count
+      });
+    
+      return pictures.data;
+  };
