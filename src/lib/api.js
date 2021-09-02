@@ -33,6 +33,7 @@ const callAPI = async (url, params = null) => {
         totalBreeds: breeds.headers['pagination-count'],
       };
   };
+
   export const fetchPictures = async (breed = '', count = 20) => {
     if (!breed) {
         return [];
